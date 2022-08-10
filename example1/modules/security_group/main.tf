@@ -1,7 +1,13 @@
-variable "name" {}
-variable "vpc_id" {}
-valiable "port" {}
-valiable "cidr_blocks" {
+variable "name" {
+  type = string
+}
+variable "vpc_id" {
+  type = string
+}
+variable "port" {
+  type = number
+}
+variable "cidr_blocks" {
   type = list(string)
 }
 
@@ -9,6 +15,10 @@ valiable "cidr_blocks" {
 resource "aws_security_group" "default" {
   name   = var.name
   vpc_id = var.vpc_id
+
+  tags = {
+    Name = var.name
+  }
 }
 
 // インバウンドルール
@@ -28,7 +38,7 @@ resource "aws_security_group_rule" "egress_example" {
   to_port           = "0"
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.id
+  security_group_id = aws_security_group.default.id
 }
 
 output "security_group_id" {
