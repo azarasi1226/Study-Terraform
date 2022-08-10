@@ -1,11 +1,11 @@
 // プライベートバケット
 resource "aws_s3_bucket" "private" {
-    bucket = "private-andoukazuki-terraform"
+  bucket = "private-andoukazuki-terraform"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "private" {
   bucket = aws_s3_bucket.private.id
-  rule  {
+  rule {
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
@@ -21,12 +21,12 @@ resource "aws_s3_bucket_versioning" "private" {
 
 // ブロックパブリックアクセス
 resource "aws_s3_bucket_public_access_block" "private" {
-    bucket = aws_s3_bucket.private.id
+  bucket = aws_s3_bucket.private.id
 
-    block_public_acls = true
-    block_public_policy =  true
-    ignore_public_acls = true
-    restrict_public_buckets = true
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 //　パブリックバケット
@@ -52,17 +52,18 @@ resource "aws_s3_bucket_cors_configuration" "public" {
 
 // ALBのログ保管用
 resource "aws_s3_bucket" "alb_log" {
-  bucket = "alb-log-andoukazuki-terraform"
+  bucket        = "alb-log-andoukazuki-terraform"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "alb_log" {
   bucket = aws_s3_bucket.alb_log.id
 
   rule {
-    id = "alb-log-lifecycle"
+    id     = "alb-log-lifecycle"
     status = "Enabled"
     expiration {
-        days = "180"
+      days = "180"
     }
   }
 }
@@ -73,14 +74,14 @@ resource "aws_s3_bucket_policy" "alb_log" {
 }
 
 data "aws_iam_policy_document" "alb_log" {
-    statement {
-      effect = "Allow"
-      actions = ["s3:PutObject"]
-      resources = ["arn:aws:s3:::${aws_s3_bucket.alb_log.id}/*"]
-      principals {
-        type = "AWS"
-        // 東京リージョンの番号
-        identifiers = ["582318560864"]
-      }
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:PutObject"]
+    resources = ["arn:aws:s3:::${aws_s3_bucket.alb_log.id}/*"]
+    principals {
+      type = "AWS"
+      // 東京リージョンの番号
+      identifiers = ["582318560864"]
     }
+  }
 }
