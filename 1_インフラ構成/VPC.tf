@@ -140,6 +140,7 @@ resource "aws_eip" "nat_gateway_1" {
   vpc = true
 
   // EIP では、関連付けの前に IGW が存在する必要がある場合があります。depends_onIGW に明示的な依存関係を設定するために使用します。
+  // これがないとdestoryできない時とかがあるんや...ドキュメント読む癖つけないとハマるな...FUCK!!!
   depends_on = [
     aws_internet_gateway.example
   ]
@@ -152,7 +153,6 @@ resource "aws_eip" "nat_gateway_1" {
 resource "aws_eip" "nat_gateway_2" {
   vpc = true
 
-  // EIP では、関連付けの前に IGW が存在する必要がある場合があります。depends_onIGW に明示的な依存関係を設定するために使用します。
   depends_on = [
     aws_internet_gateway.example
   ]

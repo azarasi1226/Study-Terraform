@@ -69,6 +69,36 @@ resource "aws_lb_listener" "http" {
   }
 }
 
+// ターゲットグループ(ECSのサービスと紐づけるよ)
+resource "aws_lb_target_group" "example" {
+  name = "example"
+  target_type = "ip"
+  vpc_id = aws_vpc.example.id
+  port = 80
+  protocol = "HTTP"
+  deregistration_delay = 300
+
+  health_check {
+    path = "/"
+    // 正常判定までの回数
+    healthy_threshold = 5
+    //異状判定までの回数
+    unhealthy_threshold = 2
+    // ヘルスチェックのタイムアウト
+    timeout = 5
+    //送信回数
+    interval = 30
+    //正常判定に使うステータスコード
+    matcher = 200
+    port = "traffic-port"
+    protocol = "HTTP"
+  }
+
+  depends_on = [
+    aws_lb.example
+  ]
+}
+
 output "alb_dns_name" {
   value = aws_lb.example.dns_name
 }
