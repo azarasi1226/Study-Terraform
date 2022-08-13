@@ -8,6 +8,14 @@
                 "protocol": "tcp",
                 "containerPort": 80
             }
-        ]
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-region": "ap-northeast-1",
+                "awslogs-stream-prefix": "nginx",
+                "awslogs-group": "/ecs/example"
+            }
+        }
     }
 ]
