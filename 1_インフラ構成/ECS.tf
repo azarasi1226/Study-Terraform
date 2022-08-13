@@ -21,7 +21,7 @@ resource "aws_ecs_service" "example" {
     cluster = aws_ecs_cluster.example.arn
     task_definition = aws_ecs_task_definition.example.arn
     //Taskの同時期同数、本番環境では２以上が推奨
-    desired_count = 2
+    desired_count = 3
     launch_type = "FARGATE"
     platform_version = "1.4.0"
 
