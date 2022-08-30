@@ -20,7 +20,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "alb_log" {
   }
 }
 
-// リソースポリシー(ELBからのAccessを許可する)
+// S3に付与するリソースポリシー(ELBからのAccessを許可する)
 data "aws_iam_policy_document" "alb_log" {
   statement {
     effect    = "Allow"
