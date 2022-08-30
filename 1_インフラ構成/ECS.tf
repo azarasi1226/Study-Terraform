@@ -41,6 +41,15 @@ resource "aws_ecs_task_definition" "example"{
     execution_role_arn = module.ecs_task_execution_role.iam_role_arn
 }
 
+//サービスに割り当てるセキュリティーグループ
+module "nginx_sg" {
+    source = "./modules/security_group"
+    name = "nginx-sg"
+    vpc_id = aws_vpc.example.id
+    port = 80
+    cidr_blocks = [aws_vpc.example.cidr_block]
+}
+
 //サービス
 resource "aws_ecs_service" "example" {
     name = "example"
@@ -74,12 +83,4 @@ resource "aws_ecs_service" "example" {
     lifecycle {
       ignore_changes = [task_definition]
     }
-}
-
-module "nginx_sg" {
-    source = "./modules/security_group"
-    name = "nginx-sg"
-    vpc_id = aws_vpc.example.id
-    port = 80
-    cidr_blocks = [aws_vpc.example.cidr_block]
 }
