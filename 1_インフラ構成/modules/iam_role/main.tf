@@ -4,7 +4,7 @@ variable "policy" {}
 
 variable "identifier" {}
 
-// 信頼ポリシー(基本はAWSサービスとする)
+// 信頼ポリシー(AWSのサービスだけとする)
 data "aws_iam_policy_document" "assume_role" {
   statement {
     actions = ["sts:AssumeRole"]

@@ -1,6 +1,8 @@
 // ALBのログ保管用S3バケット
 resource "aws_s3_bucket" "alb_log" {
   bucket        = "alb-log-andoukazuki-terraform"
+
+  //中にアイテムが残ってても消す設定。これがないとterraform destoryできなくなるよ
   force_destroy = true
 }
 
@@ -8,6 +10,7 @@ resource "aws_s3_bucket" "alb_log" {
 resource "aws_s3_bucket_lifecycle_configuration" "alb_log" {
   bucket = aws_s3_bucket.alb_log.id
 
+  //180日デリソソースが消えるように
   rule {
     id     = "alb-log-lifecycle"
     status = "Enabled"
@@ -15,12 +18,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "alb_log" {
       days = "180"
     }
   }
-}
-
-//リソースポリシーの紐づけ
-resource "aws_s3_bucket_policy" "alb_log" {
-  bucket = aws_s3_bucket.alb_log.id
-  policy = data.aws_iam_policy_document.alb_log.json
 }
 
 // リソースポリシー(ELBからのAccessを許可する)
@@ -35,4 +32,10 @@ data "aws_iam_policy_document" "alb_log" {
       identifiers = ["582318560864"]
     }
   }
+}
+
+//リソースポリシーの紐づけ
+resource "aws_s3_bucket_policy" "alb_log" {
+  bucket = aws_s3_bucket.alb_log.id
+  policy = data.aws_iam_policy_document.alb_log.json
 }

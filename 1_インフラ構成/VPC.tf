@@ -1,4 +1,3 @@
-
 // VPC作成
 resource "aws_vpc" "example" {
   cidr_block = "192.168.0.0/16"
@@ -104,6 +103,8 @@ resource "aws_subnet" "private_2" {
 }
 
 //プライベートルートテーブル1
+// 0.0.0.0/0通信は１テーブルにつき１個しか定義できない。まぁよくよく考えたら当然
+// 0.0.0.0/→nat-gateway01 と 0.0.0.0/→natgetway-2が同じテーブルにあったらどっちに分岐していいかわからんもんね
 resource "aws_route_table" "private_1" {
   vpc_id = aws_vpc.example.id
 
@@ -113,8 +114,6 @@ resource "aws_route_table" "private_1" {
 }
 
 //プライベートルートテーブル2
-// 0.0.0.0/0通信は１テーブルにつき１個しか定義できない。まぁよくよく考えたら当然
-// 0.0.0.0/→nat-gateway01 と 0.0.0.0/→natgetway-2が同じテーブルにあったらどっちに分岐していいかわからんもんね
 resource "aws_route_table" "private_2" {
   vpc_id = aws_vpc.example.id
 
@@ -135,12 +134,12 @@ resource "aws_route_table_association" "private_2" {
   route_table_id = aws_route_table.private_2.id
 }
 
-//EIP1
+//NatGateway用のElasticIP1
 resource "aws_eip" "nat_gateway_1" {
   vpc = true
 
   // EIP では、関連付けの前に IGW が存在する必要がある場合があります。depends_onIGW に明示的な依存関係を設定するために使用します。
-  // これがないとdestoryできない時とかがあるんや...ドキュメント読む癖つけないとハマるな...FUCK!!!
+  // つまりこの依存関係の設定してないとdestroyできない場合があるんや！！！！！fooooo!!!
   depends_on = [
     aws_internet_gateway.example
   ]
@@ -149,7 +148,7 @@ resource "aws_eip" "nat_gateway_1" {
   }
 }
 
-//EIP2
+//NagGateway用のElasticIP2
 resource "aws_eip" "nat_gateway_2" {
   vpc = true
 
@@ -200,4 +199,3 @@ resource "aws_route" "private_2" {
   nat_gateway_id         = aws_nat_gateway.example_2.id
   destination_cidr_block = "0.0.0.0/0"
 }
-

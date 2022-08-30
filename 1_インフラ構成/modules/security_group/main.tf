@@ -1,13 +1,17 @@
 variable "name" {
+  description = "セキュリティーグループ名"
   type = string
 }
 variable "vpc_id" {
+  description = "VPC_ID"
   type = string
 }
 variable "port" {
+  description = "接続を許可するポート番号"
   type = number
 }
 variable "cidr_blocks" {
+  description = "接続を許可するIPアドレスリスト"
   type = list(string)
 }
 

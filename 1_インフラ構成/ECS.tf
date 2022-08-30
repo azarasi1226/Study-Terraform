@@ -1,4 +1,4 @@
-// クラスタ
+// ECSクラスタ
 resource "aws_ecs_cluster" "example" {
     name = "example"
 }
@@ -10,7 +10,7 @@ data "aws_iam_policy" "ecs_task_execution_role_policy" {
 
 //↑のポリシーを継承して新たなポリシーを作成
 data "aws_iam_policy_document" "ecs_task_execution" {
-    source_json = data.aws_iam_policy.ecs_task_execution_role_policy.policy
+    source_policy_documents = [data.aws_iam_policy.ecs_task_execution_role_policy.policy]
 
     statement {
       effect = "Allow"
@@ -33,7 +33,7 @@ resource "aws_ecs_task_definition" "example"{
     family = "example"
     cpu  = "256"
     memory = "512"
-    //Fargateの場合固定される
+    //Fargateの場合ネットワークモードは固定される
     network_mode = "awsvpc"
     requires_compatibilities = ["FARGATE"]
     container_definitions = file("./container_definitions.json")

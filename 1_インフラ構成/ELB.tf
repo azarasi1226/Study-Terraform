@@ -2,20 +2,22 @@
 resource "aws_lb" "example" {
   name               = "example"
   load_balancer_type = "application"
-  // インターネット向けなおかVPC内部(internal)向けなのか
+  // インターネット向けなのか、VPC内部(internal)向けなのか
   internal = false
-  //タイムアウト時間(なんの？)
+  //タイムアウト時間(keepAliive)
   idle_timeout = 60
 
   //削除保護。本番環境でミスって消さないように
   //ただこれつけるとinternet-gateway消せなくてdestoryできなくなったんだがｗｗｗ
   //enable_deletion_protection = true
 
+  //サブネット指定
   subnets = [
     aws_subnet.public_1.id,
     aws_subnet.public_2.id
   ]
 
+  //アクセスログ
   access_logs {
     bucket  = aws_s3_bucket.alb_log.id
     enabled = true
@@ -28,6 +30,7 @@ resource "aws_lb" "example" {
   ]
 }
 
+//HTTP接続用
 module "http_sg" {
   source      = "./modules/security_group"
   name        = "http-sg"
@@ -36,6 +39,7 @@ module "http_sg" {
   cidr_blocks = ["0.0.0.0/0"]
 }
 
+//HTTPS接続用
 module "https_sg" {
   source      = "./modules/security_group"
   name        = "https_sg"
@@ -44,6 +48,7 @@ module "https_sg" {
   cidr_blocks = ["0.0.0.0/0"]
 }
 
+//リダイレクト用
 module "http_redirect_sg" {
   source      = "./modules/security_group"
   name        = "http-redirect-sg"
@@ -51,7 +56,6 @@ module "http_redirect_sg" {
   port        = 8080
   cidr_blocks = ["0.0.0.0/0"]
 }
-
 
 // ターゲットグループ(ECSのサービスと紐づけるよ)
 resource "aws_lb_target_group" "example" {

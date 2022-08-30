@@ -8,25 +8,6 @@
                 "protocol": "tcp",
                 "containerPort": 80
             }
-        ],
-        "logConfiguration": {
-            "logDriver": "awslogs",
-            "options": {
-                "awslogs-region": "ap-northeast-1",
-                "awslogs-stream-prefix": "nginx",
-                "awslogs-group": "/ecs/example"
-            }
-        },
-        "secrets": [
-            {
-                "name": "DB_USERNAME",
-                "valueFrom": "/db/username"
-            },
-            {
-                "name": "DB_PASSWORD",
-                "valueFrom": "/db/password"
-            }
-        ],
-        "command": ["/usr/bin/env"]
+        ]
     }
 ]
