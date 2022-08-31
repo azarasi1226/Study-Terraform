@@ -16,6 +16,16 @@
                 "awslogs-stream-prefix": "nginx",
                 "awslogs-group": "/ecs/example"
             }
-        }
+        },
+        "secrets": [
+            {
+                "name": "DB_USERNAME",
+                "valueFrom": "/db/username"
+            },
+            {
+                "name": "DB_PASSWORD",
+                "valueFrom": "/db/password"
+            }
+        ]
     }
 ]

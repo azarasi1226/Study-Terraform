@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+
+  prebuild:
+    
+  build:
+    commands:
+      - docker build -t $IMAGE .
+      - docker push $IMAGE
+  
+  post_build:
+    commands:
+      - printf

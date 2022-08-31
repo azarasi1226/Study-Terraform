@@ -39,3 +39,23 @@ resource "aws_s3_bucket_policy" "alb_log" {
   bucket = aws_s3_bucket.alb_log.id
   policy = data.aws_iam_policy_document.alb_log.json
 }
+
+
+//CI/CDに使用するアーティファクトストア
+resource "aws_s3_bucket" "artifact" {
+  bucket = "artifact-andoukazuki-terraform"
+}
+
+// S3バケットに保存するアイテムのライフサイクル
+resource "aws_s3_bucket_lifecycle_configuration" "artifact" {
+  bucket = aws_s3_bucket.artifact.id
+
+  //180日デリソソースが消えるように
+  rule {
+    id     = "alb-log-lifecycle"
+    status = "Enabled"
+    expiration {
+      days = "180"
+    }
+  }
+}
